@@ -21,27 +21,8 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Update kubeconfig
-        run: |
-          aws eks update-kubeconfig \
-            --region ${{ secrets.AWS_REGION }} \
-            --name ${{ secrets.EKS_CLUSTER_NAME }}
-
-      - name: Delete Kubernetes resources
-        run: |
-          kubectl delete -f k8s/service.yaml --ignore-not-found=true
-          kubectl delete -f k8s/deployment.yaml --ignore-not-found=true
-
-      - name: Wait for load balancer cleanup
-        run: |
-          echo "Waiting 180 seconds for AWS load balancer cleanup..."
-          sleep 180
 
       - name: Terraform init
         working-directory: terraform
