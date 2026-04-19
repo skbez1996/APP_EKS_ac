@@ -1,0 +1,25 @@
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: Instance
+metadata:
+  name: demo-mysql
+spec:
+  forProvider:
+    region: us-east-1
+    engine: mysql
+    engineVersion: "8.0"
+    instanceClass: db.t3.micro
+    allocatedStorage: 20
+    storageType: gp2
+    dbName: demodb
+    username: admin
+    passwordSecretRef:
+      namespace: crossplane-system
+      name: rds-password
+      key: password
+    dbSubnetGroupName: rds-subnet-group
+    vpcSecurityGroupIds:
+      - sg-0feb62cb39971b092
+    skipFinalSnapshot: true
+    publiclyAccessible: false
+  providerConfigRef:
+    name: default

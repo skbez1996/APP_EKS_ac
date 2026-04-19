@@ -1,0 +1,13 @@
+apiVersion: rds.aws.upbound.io/v1beta1
+kind: SubnetGroup
+metadata:
+  name: rds-subnet-group
+spec:
+  forProvider:
+    region: us-east-1
+    description: RDS subnet group for fast-demo-eks
+    subnetIds:
+      - subnet-01e0af85c0d7f0960
+      - subnet-0c3e4a7b520534793
+  providerConfigRef:
+    name: default
