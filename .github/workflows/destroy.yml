@@ -21,6 +21,29 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ secrets.AWS_REGION }} \
+            --name ${{ secrets.EKS_CLUSTER_NAME }}
+
+      - name: Delete Crossplane RDS resources
+        run: |
+          kubectl delete -f k8s/crossplane/rds-instance.yaml --ignore-not-found=true
+          kubectl delete -f k8s/crossplane/rds-subnetgroup.yaml --ignore-not-found=true
+          echo "Waiting for RDS instance to be deleted..."
+          kubectl wait --for=delete instance/demo-mysql --timeout=300s || true
+
+      - name: Delete LoadBalancer service and deployment
+        run: |
+          kubectl delete -f k8s/service.yaml --ignore-not-found=true
+          kubectl delete -f k8s/deployment.yaml --ignore-not-found=true
+          echo "Waiting for LoadBalancer to be deprovisioned..."
+          sleep 30
+
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v3
 
