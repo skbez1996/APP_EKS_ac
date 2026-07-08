@@ -7,6 +7,11 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+  backend "s3" {
+    # Values injected at runtime via -backend-config in CI
+    # bucket, key, and region are passed by terraform.yml workflow
+  }
 }
 
 provider "aws" {
