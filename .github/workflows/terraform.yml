@@ -49,15 +49,11 @@ jobs:
             -backend-config="key=eks/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}"
 
-      - name: Terraform Plan
-        run: |
-          terraform plan \
-            -var="aws_region=${{ secrets.AWS_REGION }}" \
-            -var="cluster_name=${{ secrets.EKS_CLUSTER_NAME }}" \
-            -out=tfplan
-
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: |
+          terraform apply -auto-approve \
+            -var="aws_region=${{ secrets.AWS_REGION }}" \
+            -var="cluster_name=${{ secrets.EKS_CLUSTER_NAME }}"
 
   crossplane:
     runs-on: ubuntu-latest
