@@ -64,6 +64,9 @@ jobs:
     needs: terraform
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Configure AWS credentials from OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -94,3 +97,26 @@ jobs:
 
       - name: Verify Crossplane is running
         run: kubectl get pods -n crossplane-system
+
+      - name: Get Crossplane IAM role ARN
+        id: role
+        run: |
+          ROLE_ARN=$(aws iam get-role --role-name ${{ secrets.EKS_CLUSTER_NAME }}-crossplane --query "Role.Arn" --output text)
+          echo "arn=${ROLE_ARN}" >> $GITHUB_OUTPUT
+
+      - name: Install AWS S3 Provider
+        run: |
+          sed "s|CROSSPLANE_ROLE_ARN|${{ steps.role.outputs.arn }}|g" crossplane/provider-aws-s3.yaml | kubectl apply -f -
+
+      - name: Wait for AWS S3 Provider to be healthy
+        run: |
+          echo "Waiting for provider to be installed..."
+          kubectl wait provider/provider-aws-s3 --for=condition=Healthy --timeout=5m
+
+      - name: Apply ProviderConfig and S3 Bucket
+        run: |
+          kubectl apply -f crossplane/providerconfig.yaml
+          kubectl apply -f crossplane/s3-bucket.yaml
+
+      - name: Verify S3 bucket claim
+        run: kubectl get bucket fast-demo-crossplane-bucket

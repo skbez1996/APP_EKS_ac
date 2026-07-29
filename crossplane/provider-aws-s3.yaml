@@ -1,0 +1,18 @@
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-aws-s3
+spec:
+  package: xpkg.upbound.io/upbound/provider-aws-s3:latest
+  runtimeConfigRef:
+    name: provider-aws-s3
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: provider-aws-s3
+spec:
+  serviceAccountTemplate:
+    metadata:
+      annotations:
+        eks.amazonaws.com/role-arn: CROSSPLANE_ROLE_ARN
