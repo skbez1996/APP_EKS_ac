@@ -107,7 +107,7 @@ jobs:
       - name: Wait for AWS S3 Provider to be healthy
         run: |
           echo "Waiting for provider to be installed..."
-          kubectl wait provider/provider-aws-s3 --for=condition=Healthy --timeout=5m
+          kubectl wait provider/provider-aws-s3 --for=condition=Healthy --timeout=10m
 
       - name: Apply ProviderConfig and S3 Bucket
         run: |

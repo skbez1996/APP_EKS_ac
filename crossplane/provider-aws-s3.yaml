@@ -3,7 +3,7 @@ kind: Provider
 metadata:
   name: provider-aws-s3
 spec:
-  package: xpkg.upbound.io/upbound/provider-aws-s3:latest
+  package: xpkg.upbound.io/upbound/provider-aws-s3:v2.6.1
   runtimeConfigRef:
     name: provider-aws-s3
 ---
