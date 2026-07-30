@@ -112,6 +112,8 @@ jobs:
       - name: Apply ProviderConfig and S3 Bucket
         run: |
           kubectl apply -f crossplane/providerconfig.yaml
+          echo "Waiting 30s for provider webhook to be ready..."
+          sleep 30
           kubectl apply -f crossplane/s3-bucket.yaml
 
       - name: Verify S3 bucket claim
