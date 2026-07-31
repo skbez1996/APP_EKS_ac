@@ -16,7 +16,7 @@ resource "aws_iam_role" "crossplane" {
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
         StringLike = {
-          "${local.oidc_issuer}:sub" = "system:serviceaccount:upbound-system:*"
+          "${local.oidc_issuer}:sub" = "system:serviceaccount:crossplane-system:*"
         }
       }
     }]
