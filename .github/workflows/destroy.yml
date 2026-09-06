@@ -32,21 +32,21 @@ jobs:
 
       - name: Delete Crossplane RDS resources
         run: |
-          kubectl delete -f k8s/crossplane/rds-instance.yaml --ignore-not-found=true
-          kubectl delete -f k8s/crossplane/rds-subnetgroup.yaml --ignore-not-found=true
+          kubectl delete -f k8s/crossplane/rds-instance.yaml --ignore-not-found=true || true
+          kubectl delete -f k8s/crossplane/rds-subnetgroup.yaml --ignore-not-found=true || true
           echo "Waiting for RDS instance to be deleted..."
           kubectl wait --for=delete instance/demo-mysql --timeout=300s || true
 
       - name: Delete Crossplane S3 bucket
         run: |
-          kubectl delete -f crossplane/s3-bucket.yaml --ignore-not-found=true
+          kubectl delete -f crossplane/s3-bucket.yaml --ignore-not-found=true || true
           echo "Waiting for Crossplane to delete the S3 bucket..."
           kubectl wait --for=delete bucket.s3.aws.upbound.io/fast-demo-crossplane-bucket --timeout=300s || true
 
       - name: Delete LoadBalancer service and deployment
         run: |
-          kubectl delete -f k8s/service.yaml --ignore-not-found=true
-          kubectl delete -f k8s/deployment.yaml --ignore-not-found=true
+          kubectl delete -f k8s/service.yaml --ignore-not-found=true || true
+          kubectl delete -f k8s/deployment.yaml --ignore-not-found=true || true
           echo "Waiting for LoadBalancer to be deprovisioned..."
           sleep 30
 
