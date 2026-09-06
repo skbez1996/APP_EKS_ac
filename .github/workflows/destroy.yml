@@ -55,8 +55,15 @@ jobs:
 
       - name: Terraform init
         working-directory: terraform
-        run: terraform init
+        run: |
+          terraform init -input=false \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="key=eks/terraform.tfstate" \
+            -backend-config="region=${{ secrets.AWS_REGION }}"
 
       - name: Terraform destroy
         working-directory: terraform
-        run: terraform destroy -auto-approve
+        run: |
+          terraform destroy -auto-approve -input=false \
+            -var="aws_region=${{ secrets.AWS_REGION }}" \
+            -var="cluster_name=${{ secrets.EKS_CLUSTER_NAME }}"
