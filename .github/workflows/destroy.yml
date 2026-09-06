@@ -37,6 +37,12 @@ jobs:
           echo "Waiting for RDS instance to be deleted..."
           kubectl wait --for=delete instance/demo-mysql --timeout=300s || true
 
+      - name: Delete Crossplane S3 bucket
+        run: |
+          kubectl delete -f crossplane/s3-bucket.yaml --ignore-not-found=true
+          echo "Waiting for Crossplane to delete the S3 bucket..."
+          kubectl wait --for=delete bucket.s3.aws.upbound.io/fast-demo-crossplane-bucket --timeout=300s || true
+
       - name: Delete LoadBalancer service and deployment
         run: |
           kubectl delete -f k8s/service.yaml --ignore-not-found=true
